@@ -1,7 +1,7 @@
 # Basics Requirements
 import pathlib
 import os
-from dash import html
+from dash import html,Input, Output, dcc
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 import plotly.graph_objects as go
@@ -28,13 +28,16 @@ from app import app
 
 
 # LOAD THE DIFFERENT FILES
-from lib import title, sidebar
+from lib import title, sidebar, navbar
+from pages import content, analysis, prediction, train, not_found
 
-# PLACE THE COMPONENTS IN THE LAYOUT
 app.layout = html.Div(
     [
-        title.title,
-        sidebar.sidebar,
+        # title.main_title,
+        navbar.nav,
+        content.content
+
+        # sidebar.sidebar,
     ],
     className="ds4a-app",  # You can also add your own css files by storing them in the assets folder
 )
@@ -46,10 +49,27 @@ app.layout = html.Div(
 #
 ###############################################
 
+app.layout = html.Div([dcc.Location(id="url"), navbar.nav, content.content])
+
+@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+def render_page_content(pathname):
+    print(pathname)
+    if pathname == "/":
+        return analysis.page
+    elif pathname == "/prediction":
+        return prediction.page
+    elif pathname == "/train":
+        return train.page
+    # If the user tries to reach a different page, return a 404 message
+    return not_found.page
 ###############################################################
 # Load and modify the data that will be used in the app.
 #################################################################
 DATA_DIR = "data"
+cities_path = os.path.join(DATA_DIR, "worldcities.csv")
+world_cities = pd.read_csv(cities_path)
+cities = world_cities[world_cities['iso2'] == 'CO']
+print(cities.head(2))
 
 
 
