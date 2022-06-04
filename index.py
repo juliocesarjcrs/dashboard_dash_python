@@ -19,7 +19,7 @@ import json
 
 # Recall app
 from app import app
-
+from callbacks import get_callbacks
 ###########################################################
 #
 #           APP LAYOUT:
@@ -28,7 +28,7 @@ from app import app
 
 
 # LOAD THE DIFFERENT FILES
-from lib import title, sidebar, navbar
+from lib import title, navbar
 from pages import content, analysis, prediction, train, not_found
 
 app.layout = html.Div(
@@ -50,26 +50,12 @@ app.layout = html.Div(
 ###############################################
 
 app.layout = html.Div([dcc.Location(id="url"), navbar.nav, content.content])
+get_callbacks(app)
 
-@app.callback(Output("page-content", "children"), [Input("url", "pathname")])
-def render_page_content(pathname):
-    print(pathname)
-    if pathname == "/":
-        return analysis.page
-    elif pathname == "/prediction":
-        return prediction.page
-    elif pathname == "/train":
-        return train.page
-    # If the user tries to reach a different page, return a 404 message
-    return not_found.page
 ###############################################################
 # Load and modify the data that will be used in the app.
 #################################################################
 DATA_DIR = "data"
-cities_path = os.path.join(DATA_DIR, "worldcities.csv")
-world_cities = pd.read_csv(cities_path)
-cities = world_cities[world_cities['iso2'] == 'CO']
-print(cities.head(2))
 
 
 
