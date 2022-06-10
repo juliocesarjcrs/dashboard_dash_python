@@ -21,7 +21,6 @@ app = Dash(__name__, requests_pathname_prefix=request_path_prefix, external_styl
                 meta_tags=[{'name':'viewport', 'content':'width=device-width, initial-scale=1.0'}])
 app.title = 'Map - Correlation One'  
 
-#server = app.server
 
 # We need this for function callbacks not present in the app.layout
 app.config.suppress_callback_exceptions = True
