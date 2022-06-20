@@ -20,6 +20,7 @@ nav = html.Div(
                 dbc.NavLink("Análisis", href="/", active="exact"),
                 dbc.NavLink("Predicción", href="/prediction", active="exact"),
                 dbc.NavLink("Entrenamiento", href="/train", active="exact"),
+                dbc.NavLink("Configuración",href="/config",active="exact")
             ],
             vertical=True,
             pills=True,
