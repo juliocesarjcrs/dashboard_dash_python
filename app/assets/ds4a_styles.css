@@ -31,5 +31,14 @@
     bottom: 0;
     width: 16rem;
     padding: 2rem 1rem;
-    background-color: #AAB7B8; 
+    background-color: #ff7e7e; 
+}
+
+.SIDEBAR_STYLE {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 16rem;
+    padding: 2rem 1rem;
+    background-color: #ff9a9a;
 }

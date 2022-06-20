@@ -1,15 +1,5 @@
 import dash_bootstrap_components as dbc
 from dash import Input, Output, dcc, html
-# nav = dbc.Nav(
-#     [
-#         dbc.NavItem(dbc.NavLink("Analisis", active=True, href="#")),
-#         dbc.NavItem(dbc.NavLink("Predicción", href="#")),
-#         dbc.NavItem(dbc.NavLink("Entrenamiento", href="#")),
-#         dbc.NavItem(dbc.NavLink("Ajustes", disabled=True, href="#")),
-#     ],
-#     vertical="md",
-# )
-# the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 0,
@@ -21,11 +11,10 @@ SIDEBAR_STYLE = {
 }
 nav = html.Div(
     [
-        html.H2("Tronex", className="display-4"),
+        html.H1("Tronex"),
         html.Hr(),
         html.P(
-            "A simple sidebar layout with navigation links", className="lead"
-        ),
+            "Seleccione la pantalla de interés:"),
         dbc.Nav(
             [
                 dbc.NavLink("Análisis", href="/", active="exact"),
