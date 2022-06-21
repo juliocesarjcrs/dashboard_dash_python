@@ -2,7 +2,11 @@
 from dash import Input, Output
 from pages import configu, analysis, prediction, train, not_found
 def get_callbacks(app):
-    @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
+    # Callback method call
+    @app.callback(
+        Output(component_id="page-content", component_property="children"), # Components that recieve the output
+        [Input(component_id="url", component_property="pathname")] # Components from where I get the input
+        )
     def render_page_content(pathname):
         if pathname == "/":
             return analysis.page

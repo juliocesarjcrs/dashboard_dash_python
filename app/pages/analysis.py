@@ -1,5 +1,5 @@
-from tracemalloc import start
 from dash import html
+from lib import plots
 import dash_bootstrap_components as dbc
 # from lib import co_map
 # page = html.P("This is the content of the analysis page!")
@@ -12,8 +12,16 @@ page = dbc.Container([
             html.Hr()
         ]
         ),
-        dbc.Container(
-            html.P('Aquí van las gráficas')
-        )
+        dbc.Container([
+            dbc.Row([
+                html.P('Aquí puede ir un mapa con la distribución de los clientes y la cantidad de productos por región'),
+                plots.mapa,
+                ]),
+            dbc.Row([
+                html.P('Aquí Se mostraría la distribución de otras variables de interés, como las referencias más vendidas o comparaciones anuales'),
+                dbc.Col(plots.pie1),
+                dbc.Col(plots.histog)
+                ])
+        ])
 
     ])

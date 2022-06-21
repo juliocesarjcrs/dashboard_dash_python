@@ -17,28 +17,9 @@ import json
 # Recall app
 from app import app
 from callbacks import get_callbacks
-###########################################################
 #        APP LAYOUT:
-###########################################################
-
-# LOAD THE DIFFERENT FILES
 from lib import title, navbar
 from pages import content, analysis, prediction, train, not_found
-
-# app.layout = html.Div(
-#     [   # title.main_title,
-#         navbar.nav,
-#         content.content
-#         # sidebar.sidebar,
-#     ],
-#     className="ds4a-app",  # You can also add your own css files by storing them in the assets folder
-# )
-
-
-###############################################
-#           APP INTERACTIVITY:
-###############################################
-# app.layout = html.Div([dcc.Location(id="url"), navbar.nav, content.content])
 
 
 ###############################################################
@@ -49,16 +30,17 @@ from pages import content, analysis, prediction, train, not_found
 
 # server = app.server
 
-app = Dash(__name__)
-app.title = 'Inicio'
-app.layout = dbc.Container([
-    html.H1(['Inicio']),
-    navbar.nav,
-    html.Div([dcc.Location(id="url"), navbar.nav, content.content])
-
-]
-)
-get_callbacks(app)
+app = Dash(__name__) # Relate app with this file specifically
+app.title = 'Inicio' # Tab title
+# App layout definition
+app.layout = dbc.Container(
+    [
+        html.H1(['Inicio']),
+        navbar.nav,
+        html.Div([dcc.Location(id="url"), navbar.nav, content.content])
+        ] # Childs 
+    ) # Container
+get_callbacks(app) # Calls get_callbacks function to update pages depending on web address
 
 if __name__ == "__main__":
     app.run_server(debug=True)
