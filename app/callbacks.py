@@ -1,6 +1,6 @@
 
 from dash import Input, Output
-from pages import configu, analysis, prediction, train, not_found
+from pages import home, configu, analysis, prediction, train, not_found
 def get_callbacks(app):
     # Callback method call
     @app.callback(
@@ -9,6 +9,8 @@ def get_callbacks(app):
         )
     def render_page_content(pathname):
         if pathname == "/":
+            return home.page        
+        elif pathname == "/analisis":
             return analysis.page
         elif pathname == "/prediction":
             return prediction.page

@@ -9,7 +9,7 @@ page = dbc.Container([
         ]
         ),
         dbc.Container(
-            html.P('Aquí van las gráficas')
+            html.P('Aquí se van a subir los datasets con las nuevas ventas de productos para entrenar el modelo y poder visualizar el comportamiento en la pestaña Predicción.')
         )
 
     ])

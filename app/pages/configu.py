@@ -12,7 +12,7 @@ page = dbc.Container([
         ]
         ),
         dbc.Container(
-            html.P('Aquí van las gráficas')
+            html.P('Aquí encontrará los ajustes para la aplicación')
         )
 
     ])
