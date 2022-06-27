@@ -11,26 +11,23 @@ from components.database.conexion import categories
 #                   mapbox_style="carto-positron")
 
 
-print(categories.columns.unique().to_list())
+# print(categories.columns.unique().to_list())
 #
 mapa = html.Div([
-    dcc.Graph(id="graph",config={'displayModeBar': False}),
     html.P("Seleccione una categoría:"),
     dcc.Dropdown(id="category",
         options=['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS', 'TERCEROS'],
         value='ALCALINAS', clearable=False
     ),
+    dcc.Graph(id="graph",config={'displayModeBar': False}),
 ])
 @callback(
     Output("graph", "figure"), 
     Input("category", "value"),
     )
 def generate_chart(continents):
-    category_path = 'app/data/df_category.csv'
-    categories = pd.read_csv(category_path)
-    mask = categories[continents]
     fig = px.line(categories, 
-        x=categories["year_month"], y=categories[continents])
+        x=categories["date"], y=categories[continents])
     return fig
 
 
