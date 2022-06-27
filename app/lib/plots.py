@@ -12,7 +12,7 @@ from maindash import app
 
 mapa = html.Div([
     dcc.Graph(id="graph",config={'displayModeBar': False}),
-    html.P("Names:"),
+    html.P("Select continent:"),
     dcc.Dropdown(id="continents",
         options=["Asia", "Europe", "Africa","Americas","Oceania"],
         value='Asia', clearable=False
