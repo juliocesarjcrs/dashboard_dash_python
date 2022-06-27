@@ -15,7 +15,7 @@ import datetime as dt
 import pandas as pd
 import json
 # Recall app
-from app import app
+from maindash import app
 from callbacks import get_callbacks
 #        APP LAYOUT:
 from lib import title, navbar
@@ -30,7 +30,7 @@ from pages import content, analysis, prediction, train, not_found
 
 # server = app.server
 
-app = Dash(__name__) # Relate app with this file specifically
+
 app.title = 'Inicio' # Tab title
 # App layout definition
 app.layout = dbc.Container(
@@ -41,6 +41,8 @@ app.layout = dbc.Container(
         ] # Childs 
     ) # Container
 get_callbacks(app) # Calls get_callbacks function to update pages depending on web address
+# def update_plot(app,df):
+
 
 if __name__ == "__main__":
     app.run_server(debug=True)
