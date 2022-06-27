@@ -14,25 +14,26 @@ from maindash import app
 # cities_path = os.path.join(DATA_DIR, "worldcities.csv")
 category_path = 'app/data/df_category.csv'
 categories = pd.read_csv(category_path)
-# print(categories.head())
-
+print(categories.columns.unique().to_list())
+#
 mapa = html.Div([
     dcc.Graph(id="graph",config={'displayModeBar': False}),
-    html.P("Select continent:"),
-    dcc.Dropdown(id="continents",
-        options=["Asia", "Europe", "Africa","Americas","Oceania"],
-        value='Asia', clearable=False
+    html.P("Seleccione una categoría:"),
+    dcc.Dropdown(id="category",
+        options=['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS', 'TERCEROS'],
+        value='ALCALINAS', clearable=False
     ),
 ])
 @callback(
     Output("graph", "figure"), 
-    Input("continents", "value"),
+    Input("category", "value"),
     )
 def generate_chart(continents):
-    df = px.data.gapminder() # replace with your own data source
-    mask = df.continent == continents
-    fig = px.line(df[mask], 
-        x="year", y="lifeExp", color='country')
+    category_path = 'app/data/df_category.csv'
+    categories = pd.read_csv(category_path)
+    mask = categories[continents]
+    fig = px.line(categories, 
+        x=categories["year_month"], y=categories[continents])
     return fig
 
 
