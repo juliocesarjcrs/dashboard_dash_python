@@ -1,5 +1,5 @@
 import plotly.express as px
-from dash import Dash, html, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output, callback
 import dash_bootstrap_components as dbc
 import pandas as pd
 from maindash import app
@@ -13,18 +13,18 @@ from maindash import app
 mapa = html.Div([
     dcc.Graph(id="graph",config={'displayModeBar': False}),
     html.P("Names:"),
-    dcc.Dropdown(id='continents',
+    dcc.Dropdown(id="continents",
         options=["Asia", "Europe", "Africa","Americas","Oceania"],
         value='Asia', clearable=False
     ),
 ])
-@app.callback(
+@callback(
     Output("graph", "figure"), 
     Input("continents", "value"),
     )
 def generate_chart(continents):
     df = px.data.gapminder() # replace with your own data source
-    mask = df.continent.isin(continents)
+    mask = df.continent == continents
     fig = px.line(df[mask], 
         x="year", y="lifeExp", color='country')
     return fig
