@@ -10,6 +10,12 @@ from maindash import app
 #                   color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=10,
 #                   mapbox_style="carto-positron")
 
+
+# cities_path = os.path.join(DATA_DIR, "worldcities.csv")
+category_path = 'app/data/df_category.csv'
+categories = pd.read_csv(category_path)
+# print(categories.head())
+
 mapa = html.Div([
     dcc.Graph(id="graph",config={'displayModeBar': False}),
     html.P("Select continent:"),
