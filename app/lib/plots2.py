@@ -5,32 +5,35 @@ import pandas as pd
 from maindash import app
 from components.database.conexion import categories
 
+
 # df = px.data.carshare()
 # fig = px.scatter_mapbox(df, lat="centroid_lat", lon="centroid_lon", color="peak_hour", size="car_hours",
 #                   color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=10,
 #                   mapbox_style="carto-positron")
 
 
-print(categories.columns.unique().to_list())
-#
+# cities_path = os.path.join(DATA_DIR, "worldcities.csv")
+# category_path = 'app/data/df_category.csv'
+# categories = pd.read_csv(category_path)
+# print(categories.head())
+
 mapa = html.Div([
-    dcc.Graph(id="graph",config={'displayModeBar': False}),
-    html.P("Seleccione una categoría:"),
-    dcc.Dropdown(id="category",
-        options=['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS', 'TERCEROS'],
-        value='ALCALINAS', clearable=False
+    dcc.Graph(id="graph-2",config={'displayModeBar': False}),
+    html.P("Names:"),
+    dcc.Dropdown(id="continents-2",
+        options=["Asia", "Europe", "Africa","Americas","Oceania"],
+        value='Asia', clearable=False
     ),
 ])
 @callback(
-    Output("graph", "figure"), 
-    Input("category", "value"),
+    Output("graph-2", "figure"), 
+    Input("continents-2", "value"),
     )
-def generate_chart(continents):
-    category_path = 'app/data/df_category.csv'
-    categories = pd.read_csv(category_path)
-    mask = categories[continents]
-    fig = px.line(categories, 
-        x=categories["year_month"], y=categories[continents])
+def generate_chart_2(continents):
+    df = px.data.gapminder() # replace with your own data source
+    mask = df.continent == continents
+    fig = px.line(df[mask], 
+        x="year", y="lifeExp", color='country')
     return fig
 
 
