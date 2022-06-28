@@ -1,25 +1,17 @@
-# Basics Requirements
-import pathlib
-import os
-from dash import Dash,html,Input, Output, dcc
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
 import plotly.graph_objects as go
 import plotly.express as px
 # Dash Bootstrap Components
 import dash_bootstrap_components as dbc
-# Data
-import math
-import numpy as np
-import datetime as dt
-import pandas as pd
-import json
+
 # Recall app
 from maindash import app
 from callbacks import get_callbacks
 #        APP LAYOUT:
-from lib import title, navbar
-from pages import content, analysis, prediction, train, not_found
+from lib import  navbar
+from pages import content
 
 
 ###############################################################
@@ -28,7 +20,7 @@ from pages import content, analysis, prediction, train, not_found
 # DATA_DIR = "data"
 
 
-# server = app.server
+server = app.server
 
 
 app.title = 'Inicio' # Tab title
