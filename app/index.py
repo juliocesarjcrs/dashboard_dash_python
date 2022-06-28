@@ -1,6 +1,4 @@
 # Basics Requirements
-import pathlib
-import os
 from dash import Dash,html,Input, Output, dcc
 import dash_bootstrap_components as dbc
 from dash.exceptions import PreventUpdate
@@ -18,7 +16,7 @@ import json
 from maindash import app
 from callbacks import get_callbacks
 #        APP LAYOUT:
-from lib import title, navbar
+from lib import  navbar
 from pages import content, analysis, prediction, train, not_found
 
 
@@ -27,9 +25,9 @@ from pages import content, analysis, prediction, train, not_found
 #################################################################
 # DATA_DIR = "data"
 
-
+print('1-entra index')
 server = app.server
-
+print('2-entra index')
 
 app.title = 'Inicio' # Tab title
 # App layout definition
@@ -42,7 +40,7 @@ app.layout = dbc.Container(
     ) # Container
 get_callbacks(app) # Calls get_callbacks function to update pages depending on web address
 # def update_plot(app,df):
-
+print('3-entra index')
 
 if __name__ == "__main__":
     app.run_server(debug=True)
