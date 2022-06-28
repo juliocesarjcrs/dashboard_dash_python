@@ -28,7 +28,7 @@ from pages import content, analysis, prediction, train, not_found
 # DATA_DIR = "data"
 
 
-# server = app.server
+server = app.server
 
 
 app.title = 'Inicio' # Tab title
