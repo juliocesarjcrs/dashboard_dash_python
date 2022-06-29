@@ -3,7 +3,7 @@ from dash import Dash, html, dcc, Input, Output, callback
 import dash_bootstrap_components as dbc
 import pandas as pd
 from maindash import app
-from components.database.conexion import categories
+from components.database.conexion import categories, forecast_plot
 
 # df = px.data.carshare()
 # fig = px.scatter_mapbox(df, lat="centroid_lat", lon="centroid_lon", color="peak_hour", size="car_hours",
@@ -58,4 +58,9 @@ df4 = px.data.stocks(indexed=True)
 fig4 = px.line(df4, facet_row="company", facet_row_spacing=0.01)
 linep = html.Div(
     dcc.Graph(figure=fig4, id="lineplot")
+)
+
+fig5 = px.line(forecast_plot, x='date', y="value", color="type",hover_data={"date": "|%B %d, %Y"}, title='Resultados de la predicción')
+fig_predict = html.Div(
+    dcc.Graph(figure=fig5, id="lineplot-2")
 )

@@ -12,7 +12,7 @@ page = dbc.Container([
         dbc.Container([
             html.P('Aquí va la gráfica central con las predicciones del modelo'),
             dbc.Container([
-                plots.linep
+                plots.fig_predict
             ])
             ])
 
