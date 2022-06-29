@@ -19,15 +19,25 @@ mapa = html.Div([
         options=['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS', 'TERCEROS'],
         value='ALCALINAS', clearable=False
     ),
+    dcc.Dropdown(id="dates",
+        options=['month', 'year', 'year_month','date'],
+        value='month', clearable=False
+    ),
     dcc.Graph(id="graph",config={'displayModeBar': False}),
 ])
 @callback(
     Output("graph", "figure"), 
     Input("category", "value"),
+    Input("dates","value")
     )
-def generate_chart(continents):
-    fig = px.line(categories, 
-        x=categories["date"], y=categories[continents])
+def generate_chart(cat,dates):
+    if dates == 'date':
+        fig = px.line(categories, x=categories[dates], y=categories[cat])
+    else:
+        datos = categories.groupby([dates]).sum().reset_index()
+        # print(datos[cat])
+        fig = px.line(categories, x=datos[dates], y=datos[cat])
+    
     return fig
 
 
