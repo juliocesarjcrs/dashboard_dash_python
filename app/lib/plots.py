@@ -32,11 +32,11 @@ mapa = html.Div([
     )
 def generate_chart(cat,dates):
     if dates == 'date':
-        fig = px.line(categories, x=categories[dates], y=categories[cat])
+        fig = px.line(categories, x=dates, y=cat)
     else:
         datos = categories.groupby([dates]).sum().reset_index()
         # print(datos[cat])
-        fig = px.line(categories, x=datos[dates], y=datos[cat])
+        fig = px.line(datos, x=dates, y=cat)
     
     return fig
 
