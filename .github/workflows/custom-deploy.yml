@@ -30,4 +30,6 @@ jobs:
         env:
           HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
       - name: Push to Heroku
-        run: git subtree push --prefix ${{ env.HEROKU_PROJECT_PATH }} heroku master
+        run: |
+          heroku git:remote -a ${{ secrets.HEROKU_APP_NAME }}
+          git subtree push --prefix ${{ secrets.HEROKU_PROJECT_PATH }} heroku master
