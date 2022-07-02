@@ -1,4 +1,4 @@
-from dash import html
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 page = dbc.Container([
         dbc.Row(
@@ -8,8 +8,20 @@ page = dbc.Container([
             html.Hr()
         ]
         ),
-        dbc.Container(
-            html.P('Aquí se van a subir los datasets con las nuevas ventas de productos para entrenar el modelo y poder visualizar el comportamiento en la pestaña Predicción.')
-        )
-
-    ])
+        dbc.Container([
+            html.P('Arrastre el conjunto de datos que desea procesar:'),
+            html.Div([
+                dcc.Upload([
+                    'Arrastre y suelte o ',
+                    html.A('Seleccione un archivo')
+                ], style={
+                    'width': '100%',
+                    'height': '60px',
+                    'lineHeight': '60px',
+                    'borderWidth': '1px',
+                    'borderStyle': 'dashed',
+                    'borderRadius': '5px',
+                    'textAlign': 'center'
+                })
+            ])]
+        )])

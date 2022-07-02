@@ -14,7 +14,7 @@ page = dbc.Container([
         ),
         dbc.Container([
             dbc.Row([
-                html.P('Aquí puede ir un mapa con la distribución de los clientes y la cantidad de productos por región'),
+                html.P('A continuación encontrará el comportamiento de las unidades vendidas por categoría en distintos intervalos de tiempo.'),
                 plots.mapa,
                 ]),
             dbc.Row([

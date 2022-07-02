@@ -19,6 +19,7 @@ mapa = html.Div([
         options=['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS', 'TERCEROS'],
         value='ALCALINAS', clearable=False
     ),
+    html.P("Seleccione un periodo:"),
     dcc.Dropdown(id="dates",
         options=['month', 'year', 'year_month','date'],
         value='month', clearable=False
