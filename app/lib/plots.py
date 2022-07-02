@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 from maindash import app
 from components.database.conexion import categories, forecast_plot
-
+from datetime import date
 # df = px.data.carshare()
 # fig = px.scatter_mapbox(df, lat="centroid_lat", lon="centroid_lon", color="peak_hour", size="car_hours",
 #                   color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=10,
@@ -12,11 +12,13 @@ from components.database.conexion import categories, forecast_plot
 
 
 # print(categories.columns.unique().to_list())
+options_categories = ['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS', 'TERCEROS']
+
 #
 mapa = html.Div([
     html.P("Seleccione una categoría:"),
     dcc.Dropdown(id="category",
-        options=['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS', 'TERCEROS'],
+        options=options_categories,
         value='ALCALINAS', clearable=False
     ),
     dcc.Dropdown(id="dates",
@@ -60,7 +62,48 @@ linep = html.Div(
     dcc.Graph(figure=fig4, id="lineplot")
 )
 
+
+
+
 fig5 = px.line(forecast_plot, x='date', y="value", color="type",hover_data={"date": "|%B %d, %Y"}, title='Resultados de la predicción')
-fig_predict = html.Div(
-    dcc.Graph(figure=fig5, id="lineplot-2")
-)
+# fig_predict = html.Div(
+#     dcc.Graph(figure=fig5, id="lineplot-2")
+# )
+
+fig_predict = html.Div([
+    dbc.Row(
+        [
+            dbc.Col([
+                html.P("Seleccione una categoría:"),
+                dcc.Dropdown(id="category-predict",
+                             options=options_categories,
+                             value='ALCALINAS', clearable=False
+                             )]),
+            dbc.Col([html.P("Seleccione una región:"),
+                     dcc.Dropdown(id="region",
+                                  options=['BOGOTÁ', 'CENTRO',
+                                           'NORTE', 'SANTANDER', 'SUR'],
+                                  value='BOGOTÁ', clearable=False
+                                  )
+                     ])
+        ]),
+    dbc.Row(
+        [dbc.Col(
+            html.Div([html.P("Seleccione rango de fechas:"),
+                dcc.DatePickerRange(
+                    id='my-date-picker-range',
+                    min_date_allowed=date(1995, 8, 5),
+                    max_date_allowed=date(2017, 9, 19),
+                    initial_visible_month=date(2017, 8, 5),
+                    end_date=date(2017, 8, 25)
+                ),
+                html.Div(id='output-container-date-picker-range')
+            ])
+        )
+
+        ]),
+    dcc.Graph(figure=fig5, id="predict-plot",
+              config={'displayModeBar': False}),
+])
+
+
