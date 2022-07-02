@@ -3,6 +3,8 @@ import pickle
 format_date = '%Y-%m-%d'
 category_path = 'data/df_category.csv'
 categories = pd.read_csv(category_path)
+df_category_regional = pd.read_csv('data/df_category_regional.csv')
+
 
 def plot_predict(train, test, forecast):
     train_plot = train
