@@ -125,17 +125,28 @@ def update_output(n_clicks, category_value, region_select, start_date, end_date)
         return fig5
     #print('start_date', start_date)
     #print('end_date', end_date)
-    file_name =category_value+ '_'+region_select+'.sav'
+    col_name = category_value+ '_'+region_select
+    file_name =col_name +'.sav'
     smodel = load_model(file_name)
-    fitted_series = predict_data(smodel, 3, 'M')
-    #print(fitted_series)
-    forecast = pd.DataFrame(fitted_series, index = fitted_series.index, columns=['value'])
-    forecast_load = forecast.reset_index()
-    predict_df = forecast_load
-    predict_df['type'] = 'predict'
+    predict_df = predict_data(smodel, 3, col_name ,'M')
     print(predict_df.head(3))
+    print(type(start_date))
+    print(type(end_date))
+    print(start_date)
+    print(end_date)
 
-    fig_result = px.line(predict_df, x='index', y="value", color="type",hover_data={"index": "|%B %d, %Y"}, title='Resultados de la predicción')
+    #f_fin = end_date.strptime(f_fin, '%Y-%m-%d')
+    #f_ini = start_date.strptime(f_ini, '%Y-%m-%d')
+    
+    #num = diff_month(end_date, start_date)
+    #print('num', num)
+ 
+
+    fig_result = px.line(predict_df, x='date', y="value", color="type",hover_data={"date": "|%B %d, %Y"}, title='Resultados de la predicción')
     return fig_result
 
+
+def diff_month(d1, d2):
+
+    return (d1.year - d2.year) * 12 + d1.month - d2.month
 
