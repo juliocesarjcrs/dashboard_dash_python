@@ -23,11 +23,10 @@ from pages import content
 server = app.server
 
 
-app.title = 'Inicio' # Tab title
+# app.title = 'Inicio' # Tab title
 # App layout definition
 app.layout = dbc.Container(
     [
-        html.H1(['Inicio']),
         navbar.nav,
         html.Div([dcc.Location(id="url"), navbar.nav, content.content])
         ] # Childs 
