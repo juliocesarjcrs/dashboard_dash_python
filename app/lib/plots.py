@@ -3,7 +3,7 @@ from dash import Dash, html, dcc, Input, Output, callback
 import dash_bootstrap_components as dbc
 import pandas as pd
 from maindash import app
-from components.database.conexion import categories, forecast_plot
+from components.database.conexion import categories, forecast_plot, load_model, predict_data
 from datetime import date
 # df = px.data.carshare()
 # fig = px.scatter_mapbox(df, lat="centroid_lat", lon="centroid_lon", color="peak_hour", size="car_hours",
@@ -12,7 +12,9 @@ from datetime import date
 
 
 # print(categories.columns.unique().to_list())
-options_categories = ['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS', 'TERCEROS']
+options_categories = ['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS'] # 'TERCEROS'
+regiones = ['BOGOTÁ', 'CENTRO','NORTE', 'SANTANDER', 'SUR']
+
 
 #
 mapa = html.Div([
@@ -81,9 +83,8 @@ fig_predict = html.Div([
                              value='ALCALINAS', clearable=False
                              )]),
             dbc.Col([html.P("Seleccione una región:"),
-                     dcc.Dropdown(id="region",
-                                  options=['BOGOTÁ', 'CENTRO',
-                                           'NORTE', 'SANTANDER', 'SUR'],
+                     dcc.Dropdown(id="dropdown-region",
+                                  options=regiones,
                                   value='BOGOTÁ', clearable=False
                                   )
                      ])
@@ -93,18 +94,48 @@ fig_predict = html.Div([
             html.Div([html.P("Seleccione rango de fechas:"),
                 dcc.DatePickerRange(
                     id='my-date-picker-range',
-                    min_date_allowed=date(1995, 8, 5),
-                    max_date_allowed=date(2017, 9, 19),
-                    initial_visible_month=date(2017, 8, 5),
-                    end_date=date(2017, 8, 25)
+                    min_date_allowed=date(2022, 3, 1),
+                    max_date_allowed=date(2023, 3, 1),
+                    initial_visible_month=date(2022, 3, 1),
+                    end_date=date(2022, 3, 25),
+                    start_date=date(2023, 4, 25),
+                    display_format='MMM YYYY'
                 ),
                 html.Div(id='output-container-date-picker-range')
             ])
-        )
+        ),
+        dbc.Col( html.Button('Predecir', id='button-predict'),)
 
         ]),
-    dcc.Graph(figure=fig5, id="predict-plot",
-              config={'displayModeBar': False}),
+    dcc.Graph( id="predict-plot",config={'displayModeBar': False})
 ])
+
+@callback(
+    Output('predict-plot', 'figure'),
+    [Input('button-predict', 'n_clicks'),
+    Input('category-predict', 'value'),
+    Input('dropdown-region', 'value'),
+    Input('my-date-picker-range', 'start_date'),
+    Input('my-date-picker-range', 'end_date')
+    ],
+    )
+def update_output(n_clicks, category_value, region_select, start_date, end_date):
+    if n_clicks is None:
+        fig5 = px.line(forecast_plot, x='date', y="value", color="type",hover_data={"date": "|%B %d, %Y"}, title='Resultados de la predicción')
+        return fig5
+    #print('start_date', start_date)
+    #print('end_date', end_date)
+    file_name =category_value+ '_'+region_select+'.sav'
+    smodel = load_model(file_name)
+    fitted_series = predict_data(smodel, 3, 'M')
+    #print(fitted_series)
+    forecast = pd.DataFrame(fitted_series, index = fitted_series.index, columns=['value'])
+    forecast_load = forecast.reset_index()
+    predict_df = forecast_load
+    predict_df['type'] = 'predict'
+    print(predict_df.head(3))
+
+    fig_result = px.line(predict_df, x='index', y="value", color="type",hover_data={"index": "|%B %d, %Y"}, title='Resultados de la predicción')
+    return fig_result
 
 

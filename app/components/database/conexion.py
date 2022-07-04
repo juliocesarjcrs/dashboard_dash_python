@@ -45,4 +45,19 @@ send_train = train.reset_index()
 send_test = test.reset_index()
 forecast_plot = plot_predict(send_train, send_test, forecast_load)
 
+def load_model(file_name):
+    path_models = 'data/models/'
+    path_models += file_name
+    smodel = pickle.load(open(path_models, 'rb'))
+    return smodel
+
+def predict_data(smodel, cal_period, type_freq ='M'):
+    fitted, confint = smodel.predict(n_periods=cal_period, return_conf_int=True)
+    index_of_fc = pd.date_range(train.index[-1], periods = cal_period, freq=type_freq)
+    # make series for plotting purpose
+    fitted_series = pd.Series(fitted, index=index_of_fc)
+    return fitted_series
+
+
+
 
