@@ -3,13 +3,8 @@ from dash import Dash, html, dcc, Input, Output, callback, callback_context
 import dash_bootstrap_components as dbc
 import pandas as pd
 from maindash import app
-from components.database.conexion import categories, forecast_plot, load_model, predict_data
+from components.database.conexion import categories, load_model, predict_data
 from datetime import date, datetime
-# df = px.data.carshare()
-# fig = px.scatter_mapbox(df, lat="centroid_lat", lon="centroid_lon", color="peak_hour", size="car_hours",
-#                   color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=10,
-#                   mapbox_style="carto-positron")
-
 
 # print(categories.columns.unique().to_list())
 options_categories = ['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS'] # 'TERCEROS'
@@ -64,13 +59,6 @@ linep = html.Div(
     dcc.Graph(figure=fig4, id="lineplot")
 )
 
-
-
-
-fig5 = px.line(forecast_plot, x='date', y="value", color="type",hover_data={"date": "|%B %d, %Y"}, title='Resultados de la predicción')
-# fig_predict = html.Div(
-#     dcc.Graph(figure=fig5, id="lineplot-2")
-# )
 
 fig_predict = html.Div([
     dbc.Row(
@@ -127,6 +115,12 @@ fig_predict = html.Div([
     )
 def update_output(button_val, category_value, region_select, start_date, end_date):
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+    print('start_date', start_date,'end_date: ', end_date)
+    if not start_date:
+        return {}
+    if not end_date:
+        return {}
+
     if 'button-predict' in changed_id:
         col_name = category_value+ '_'+region_select
         file_name =col_name +'.sav'
