@@ -7,7 +7,7 @@ from components.database.conexion import categories, load_model, predict_data
 from datetime import date, datetime
 
 # print(categories.columns.unique().to_list())
-options_categories = ['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS'] # 'TERCEROS'
+options_categories = ['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS','TERCEROS'] # 'TERCEROS'
 regiones = ['BOGOTÁ', 'CENTRO','NORTE', 'SANTANDER', 'SUR']
 
 
@@ -82,7 +82,7 @@ fig_predict = html.Div([
             html.Div([html.P("Seleccione un rango de fechas que desea predecir, recuerde seleccionar únicamente el primer día del mes deseado:"),
                 dcc.DatePickerRange(
                     id='my-date-picker-range',
-                    min_date_allowed=date(2022, 5, 1),
+                    min_date_allowed=date(2021, 5, 1),
                     # max_date_allowed=date(2023, 3, 1),
                     # initial_visible_month=date(2022, 3, 1),
                     # end_date=date(2023, 3, 25),
@@ -115,7 +115,6 @@ fig_predict = html.Div([
     )
 def update_output(button_val, category_value, region_select, start_date, end_date):
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
-    print('start_date', start_date,'end_date: ', end_date)
     if not start_date:
         return {}
     if not end_date:
@@ -124,18 +123,13 @@ def update_output(button_val, category_value, region_select, start_date, end_dat
     if 'button-predict' in changed_id:
         col_name = category_value+ '_'+region_select
         file_name =col_name +'.sav'
-        smodel = load_model(file_name)
+        smodel = load_model(file_name,'mensual')
         f_fin = datetime.strptime(end_date, '%Y-%m-%d')
         f_ini = datetime.strptime(start_date, '%Y-%m-%d')
         num = diff_month(f_fin, f_ini)
         print(num)
         predict_df = predict_data(smodel, num, col_name ,'M')
         fig_result = px.line(predict_df, x='date', y="value", color="type",hover_data={"date": "|%B %d, %Y"}, title='Resultados de la predicción')
-        # print(predict_df.tail(4))
-        # print(type(start_date))
-        # print(type(end_date))
-        # print(start_date)
-        # print(end_date)
         return fig_result
     else:
         return {}

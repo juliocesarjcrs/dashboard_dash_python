@@ -7,8 +7,8 @@ df_category_regional = pd.read_csv('data/df_category_regional.csv').rename(colum
 df_category_regional.date = pd.to_datetime(pd.to_datetime(df_category_regional.date).dt.date)
 
 
-def load_model(file_name):
-    path_models = 'data/models/'
+def load_model(file_name,type_freq= 'mensual'):
+    path_models = 'data/models/' + type_freq+'/'
     path_models += file_name
     smodel = pickle.load(open(path_models, 'rb'))
     return smodel
