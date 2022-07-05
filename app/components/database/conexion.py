@@ -1,5 +1,7 @@
 import pandas as pd
 import pickle
+import os.path
+from os.path import exists
 format_date = '%Y-%m-%d'
 category_path = 'data/df_category.csv'
 categories = pd.read_csv(category_path)
@@ -10,6 +12,9 @@ df_category_regional.date = pd.to_datetime(pd.to_datetime(df_category_regional.d
 def load_model(file_name,type_freq= 'mensual'):
     path_models = 'data/models/' + type_freq+'/'
     path_models += file_name
+    file_exists = exists(path_models)
+    if not file_exists:
+        return None
     smodel = pickle.load(open(path_models, 'rb'))
     return smodel
 def predict_data(smodel, future_periods, col_name, type_freq ='M'):
