@@ -3,7 +3,7 @@ from dash import Dash, html, dcc, Input, Output, callback, callback_context
 import dash_bootstrap_components as dbc
 import pandas as pd
 from maindash import app
-from components.database.conexion import categories, load_model, predict_data
+from components.database.conexion import categories, df_category_regional, load_model, predict_data
 from datetime import date, datetime
 
 # print(categories.columns.unique().to_list())
@@ -13,30 +13,48 @@ regiones = ['BOGOTÁ', 'CENTRO','NORTE', 'SANTANDER', 'SUR']
 
 #
 mapa = html.Div([
-    html.P("Seleccione una categoría:"),
-    dcc.Dropdown(id="category",
-        options=options_categories,
-        value='ALCALINAS', clearable=False
-    ),
-    html.P("Seleccione un periodo:"),
-    dcc.Dropdown(id="dates",
-        options=['month', 'year', 'year_month','date'],
-        value='month', clearable=False
-    ),
+    html.P('A continuación encontrará el comportamiento de las unidades vendidas por categoría en distintos intervalos de tiempo.'),
+    dbc.Row([
+        dbc.Col([
+            html.P("Seleccione una categoría:"),
+            dcc.Dropdown(id="category",
+                options=options_categories,
+                value='ALCALINAS', clearable=False
+            )
+        ]),
+        dbc.Col([
+            html.P("Seleccione un periodo:"),
+            dcc.Dropdown(id="dates",
+                options=['month', 'year', 'year_month','date'],
+                value='month', clearable=False
+            )
+        ])
+    ]),
+    dbc.Row([
+        dbc.Col([
+            html.P("Seleccione una región:"),
+            dcc.Dropdown(id="region",
+                options=regiones,
+                value='BOGOTÁ', clearable=False
+            )
+        ]),
+    ]),
     dcc.Graph(id="graph",config={'displayModeBar': False}),
 ])
 @callback(
     Output("graph", "figure"), 
     Input("category", "value"),
-    Input("dates","value")
+    Input("dates","value"),
+    Input("region","value")
     )
-def generate_chart(cat,dates):
+def generate_chart(cat,dates,region):
+    sel = cat+'_'+region
     if dates == 'date':
-        fig = px.line(categories, x=dates, y=cat)
+        fig = px.line(df_category_regional, x=dates, y=sel)
     else:
-        datos = categories.groupby([dates]).sum().reset_index()
+        datos = df_category_regional.groupby([dates]).sum().reset_index()
         # print(datos[cat])
-        fig = px.line(datos, x=dates, y=cat)    
+        fig = px.line(datos, x=dates, y=sel)    
     return fig
 
 
@@ -100,14 +118,16 @@ fig_predict = html.Div([
 
             ]),
         ),
-            dbc.Col(
-            dcc.RadioItems(
-                id='type-frequency',
-                options=[{'label': 'Mensual', 'value': 'mensual'},
-                         {'label': 'Semanal', 'value': 'semanal'}],
-                value='mensual'
-            ),
-        )
+        dbc.Col([
+            html.P("Seleccione el tipo de periodos que desea predecir:"),
+                dcc.RadioItems(
+                    id='type-frequency',
+                    options=[{'label': 'Mensual', 'value': 'mensual'},
+                            {'label': 'Semanal', 'value': 'semanal'}],
+                    value='mensual',
+                    labelStyle={'display': 'block', 'padding-bottom': '10px', 'padding-top': '10px'}
+                ),
+        ]),
         ]),
 
     dbc.Col(html.P(id='error-msg')),
