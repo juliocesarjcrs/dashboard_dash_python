@@ -1,8 +1,6 @@
 from dash import html
 from lib import plots
 import dash_bootstrap_components as dbc
-# from lib import co_map
-# page = html.P("This is the content of the analysis page!")
 
 page = dbc.Container([
         dbc.Row(
@@ -17,11 +15,11 @@ page = dbc.Container([
                 html.P('A continuación encontrará el comportamiento de las unidades vendidas por categoría en distintos intervalos de tiempo.'),
                 plots.mapa,
                 ]),
-            dbc.Row([
-                html.P('Aquí Se mostraría la distribución de otras variables de interés, como las referencias más vendidas o comparaciones anuales'),
-                dbc.Col(plots.pie1),
-                dbc.Col(plots.histog)
-                ])
+            # dbc.Row([
+            #     html.P('Aquí Se mostraría la distribución de otras variables de interés, como las referencias más vendidas o comparaciones anuales'),
+            #     dbc.Col(plots.pie1),
+            #     dbc.Col(plots.histog)
+            #     ])
         ])
 
     ])

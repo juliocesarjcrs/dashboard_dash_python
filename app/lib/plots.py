@@ -3,16 +3,11 @@ from dash import Dash, html, dcc, Input, Output, callback, callback_context
 import dash_bootstrap_components as dbc
 import pandas as pd
 from maindash import app
-from components.database.conexion import categories, forecast_plot, load_model, predict_data
+from components.database.conexion import categories, load_model, predict_data
 from datetime import date, datetime
-# df = px.data.carshare()
-# fig = px.scatter_mapbox(df, lat="centroid_lat", lon="centroid_lon", color="peak_hour", size="car_hours",
-#                   color_continuous_scale=px.colors.cyclical.IceFire, size_max=15, zoom=10,
-#                   mapbox_style="carto-positron")
-
 
 # print(categories.columns.unique().to_list())
-options_categories = ['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS'] # 'TERCEROS'
+options_categories = ['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS','TERCEROS'] # 'TERCEROS'
 regiones = ['BOGOTÁ', 'CENTRO','NORTE', 'SANTANDER', 'SUR']
 
 
@@ -65,13 +60,6 @@ linep = html.Div(
 )
 
 
-
-
-fig5 = px.line(forecast_plot, x='date', y="value", color="type",hover_data={"date": "|%B %d, %Y"}, title='Resultados de la predicción')
-# fig_predict = html.Div(
-#     dcc.Graph(figure=fig5, id="lineplot-2")
-# )
-
 fig_predict = html.Div([
     dbc.Row(
         [
@@ -92,61 +80,79 @@ fig_predict = html.Div([
     dbc.Row(
         [dbc.Col(
             html.Div([html.P("Seleccione un rango de fechas que desea predecir, recuerde seleccionar únicamente el primer día del mes deseado:"),
-                dcc.DatePickerRange(
-                    id='my-date-picker-range',
-                    min_date_allowed=date(2022, 5, 1),
-                    # max_date_allowed=date(2023, 3, 1),
-                    # initial_visible_month=date(2022, 3, 1),
-                    # end_date=date(2023, 3, 25),
-                    # start_date=,
-                    display_format='MMMM YYYY',
-                    minimum_nights=28,
-                    start_date_placeholder_text='Mes Inicial',
-                    end_date_placeholder_text='Mes Final',
-                    number_of_months_shown=2
+                      dcc.DatePickerRange(
+                id='my-date-picker-range',
+                min_date_allowed=date(2021, 5, 1),
+                # max_date_allowed=date(2023, 3, 1),
+                # initial_visible_month=date(2022, 3, 1),
+                # end_date=date(2023, 3, 25),
+                # start_date=,
+                display_format='MMMM YYYY',
+                minimum_nights=28,
+                start_date_placeholder_text='Mes Inicial',
+                end_date_placeholder_text='Mes Final',
+                number_of_months_shown=2
 
-                ),
+            ),
                 # html.Div(id='output-container-date-picker-range'),
                 html.Hr(),
                 dbc.Button('Predecir', id='button-predict')
-            ])
-        ),
 
+            ]),
+        ),
+            dbc.Col(
+            dcc.RadioItems(
+                id='type-frequency',
+                options=[{'label': 'Mensual', 'value': 'mensual'},
+                         {'label': 'Semanal', 'value': 'semanal'}],
+                value='mensual'
+            ),
+        )
         ]),
-    dcc.Graph( id="predict-plot",config={'displayModeBar': False})
+
+    dbc.Col(html.P(id='error-msg')),
+    dcc.Graph(id="predict-plot", config={'displayModeBar': False})
 ])
 
 @callback(
+    [
     Output('predict-plot', 'figure'),
+     Output('error-msg', 'children')
+     ],
     [Input('button-predict', 'n_clicks'),
     Input('category-predict', 'value'),
     Input('dropdown-region', 'value'),
     Input('my-date-picker-range', 'start_date'),
-    Input('my-date-picker-range', 'end_date')
+    Input('my-date-picker-range', 'end_date'),
+    Input('type-frequency', 'value')
     ],
     )
-def update_output(button_val, category_value, region_select, start_date, end_date):
+def update_output(button_val, category_value, region_select, start_date, end_date, type_freq):
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+    if not start_date:
+        return {}, 'No existe fecha de inicio'
+    if not end_date:
+        return {}, 'No existe fecha final'
+
     if 'button-predict' in changed_id:
     #print('start_date', start_date)
     #print('end_date', end_date)
         col_name = category_value+ '_'+region_select
         file_name =col_name +'.sav'
-        smodel = load_model(file_name)
+        smodel = load_model(file_name, type_freq)
+        if not smodel:
+            return {}, 'No se encuentra el archivo del modelo'
         f_fin = datetime.strptime(end_date, '%Y-%m-%d')
         f_ini = datetime.strptime(start_date, '%Y-%m-%d')
         num = diff_month(f_fin, f_ini)
-        print(num)
-        predict_df = predict_data(smodel, num, col_name ,'M')
+        range_time = 'W' if type_freq =='semanal' else 'M'
+        future_periods = num*4 if type_freq =='semanal' else num
+        print('future_periods', future_periods, 'type range', range_time)
+        predict_df = predict_data(smodel, future_periods, col_name , range_time)
         fig_result = px.line(predict_df, x='date', y="value", color="type",hover_data={"date": "|%B %d, %Y"}, title='Resultados de la predicción')
-        # print(predict_df.tail(4))
-        # print(type(start_date))
-        # print(type(end_date))
-        # print(start_date)
-        # print(end_date)
-        return fig_result
+        return fig_result, ''
     else:
-        return {}
+        return {}, ''
 
 
 def diff_month(d1, d2):
