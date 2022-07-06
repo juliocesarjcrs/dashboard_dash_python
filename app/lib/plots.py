@@ -5,6 +5,7 @@ import pandas as pd
 from maindash import app
 from components.database.conexion import categories, df_category_regional, load_model, predict_data
 from datetime import date, datetime
+import numpy as np
 
 # print(categories.columns.unique().to_list())
 options_categories = ['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS','TERCEROS'] # 'TERCEROS'
@@ -47,16 +48,34 @@ mapa = html.Div([
     Input("dates","value"),
     Input("region","value")
     )
+# def generate_chart(cat,dates,region):
+#     sel = cat+'_'+region
+#     if dates == 'date':
+#         fig = px.line(df_category_regional, x=dates, y=sel)
+#     else:
+#         datos = df_category_regional.groupby([dates]).sum().reset_index()
+#         # print(datos[cat])
+#         fig = px.line(datos, x=dates, y=sel)
+#     return fig
 def generate_chart(cat,dates,region):
     sel = cat+'_'+region
+    df_ = df_category_regional.groupby([dates])[sel].sum().reset_index()
+    fig = px.line(data_frame = df_, x = dates, y = sel)
     if dates == 'date':
-        fig = px.line(df_category_regional, x=dates, y=sel)
+        fig = px.line(data_frame = df_, x = dates, y = sel)
     else:
-        datos = df_category_regional.groupby([dates]).sum().reset_index()
-        # print(datos[cat])
-        fig = px.line(datos, x=dates, y=sel)    
+        fig = px.line(data_frame = df_, x = dates, y = sel)
+        step = 10
+        x = list(np.arange(1,len(df_),step))
+        fig.update_layout(
+        xaxis = dict(
+            tickmode = 'array',
+            tickvals = x,
+            ticktext = list(df_[dates][x].values),
+            tickangle = 90
+            )
+            )
     return fig
-
 
 df2 = px.data.tips() # replace with your own data source
 fig2 = px.pie(df2, values='total_bill', names='day', hole=.3)
@@ -100,13 +119,13 @@ fig_predict = html.Div([
             html.Div([html.P("Seleccione un rango de fechas que desea predecir, recuerde seleccionar únicamente el primer día del mes deseado:"),
                       dcc.DatePickerRange(
                 id='my-date-picker-range',
-                min_date_allowed=date(2021, 5, 1),
+                min_date_allowed=date(2022, 6, 29),
                 # max_date_allowed=date(2023, 3, 1),
-                # initial_visible_month=date(2022, 3, 1),
+                initial_visible_month=date(2022, 6, 29),
                 # end_date=date(2023, 3, 25),
-                # start_date=,
+                start_date=date(2022, 6, 29),
                 display_format='MMMM YYYY',
-                minimum_nights=28,
+                minimum_nights=90,
                 start_date_placeholder_text='Mes Inicial',
                 end_date_placeholder_text='Mes Final',
                 number_of_months_shown=2

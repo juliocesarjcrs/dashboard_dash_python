@@ -29,6 +29,8 @@ page = dbc.Container([
                     'textAlign': 'center'
                 })
             ]),
+            html.Hr(),
+            dbc.Button('Cargar',style={'block':'True'}),
             html.Div(id='out-datatable')
             ]
         )])

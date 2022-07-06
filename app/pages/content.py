@@ -2,7 +2,7 @@
 from dash import html
 
 CONTENT_STYLE = {
-    "marginLeft": "18rem",
+    "marginLeft": "15rem",
     "marginRight": "2rem",
     "padding": "2rem 1rem",
 }
