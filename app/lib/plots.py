@@ -25,8 +25,8 @@ mapa = html.Div([
         dbc.Col([
             html.P("Seleccione un periodo:"),
             dcc.Dropdown(id="dates",
-                options=['month', 'year', 'year_month','date'],
-                value='month', clearable=False
+                options=['year_month','year_week','date'],
+                value='year_month', clearable=False
             )
         ])
     ]),
