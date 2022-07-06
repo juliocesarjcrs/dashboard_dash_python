@@ -128,6 +128,8 @@ fig_predict = html.Div([
 def update_output(button_val, category_value, region_select, start_date, end_date):
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
     if 'button-predict' in changed_id:
+    #print('start_date', start_date)
+    #print('end_date', end_date)
         col_name = category_value+ '_'+region_select
         file_name =col_name +'.sav'
         smodel = load_model(file_name)
