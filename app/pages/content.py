@@ -1,6 +1,7 @@
-
+## Dash Imports ##
 from dash import html
 
+## Content styler for space between html elements on the page ##
 CONTENT_STYLE = {
     "marginLeft": "15rem",
     "marginRight": "2rem",

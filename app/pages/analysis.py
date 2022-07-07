@@ -1,8 +1,11 @@
+## Dash Imports ##
 from dash import html
-from lib import plots
 import dash_bootstrap_components as dbc
+## Other functionalities ##
+from lib import plots
 
 page = dbc.Container([
+        ## Page Header ##
         dbc.Row(
         [
             dbc.Col(html.Img(src='assets/bar-chart-2-line.png'),width=1),
@@ -10,14 +13,17 @@ page = dbc.Container([
             html.Hr()
         ]
         ),
+        ## Plot Container ##
         dbc.Container([
             dbc.Row([
-                plots.mapa,
+                plots.fig_analysis,
                 ]),
+            ## ADD ADDITIONAL PLOTS HERE ##
+
             # dbc.Row([
-            #     html.P('Aquí Se mostraría la distribución de otras variables de interés, como las referencias más vendidas o comparaciones anuales'),
-            #     dbc.Col(plots.pie1),
-            #     dbc.Col(plots.histog)
+            #     html.P('HERE YOU CAN ADD ADDITIONAL INFORMATION FOR THE NEW PLOTS'),
+            #     dbc.Col(plots.pie1), # PIE PLOT EXAMPLE
+            #     dbc.Col(plots.histog) # HISTOGRAM PLOT EXAMPLE
             #     ])
         ])
 

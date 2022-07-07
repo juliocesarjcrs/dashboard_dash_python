@@ -1,11 +1,13 @@
+## Dash Imports ##
 from dash import html, dcc, callback, Output, Input
 import dash_bootstrap_components as dbc
+## Other functionalities ##
 import base64
-# import datetime
 import io
 import pandas as pd
 
 page = dbc.Container([
+        ## Page Header ##
         dbc.Row(
         [
             dbc.Col(html.Img(src='assets/run-line2.png'),width=1),
@@ -13,6 +15,7 @@ page = dbc.Container([
             html.Hr()
         ]
         ),
+        ## File Loader Container ##
         dbc.Container([
             html.P('Arrastre el conjunto de modelos que desea agregar:'),
             html.Div([
@@ -33,7 +36,9 @@ page = dbc.Container([
             dbc.Button('Cargar',style={'block':'True'}),
             html.Div(id='out-datatable')
             ]
-        )])
+        )]) # Container
+
+##         
 @callback(
     Output("out-datatable", "children"), 
     Input("up-data", "content"),

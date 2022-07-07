@@ -2,6 +2,7 @@ from dash import html
 from lib import plots
 import dash_bootstrap_components as dbc
 page = dbc.Container([
+        ## Page Header ##
         dbc.Row(
         [
             dbc.Col(html.Img(src='assets/focus-2-line.png'),width=1),
@@ -9,6 +10,7 @@ page = dbc.Container([
             html.Hr()
         ]
         ),
+        ## Plot Container ##
         dbc.Container([
             html.P('Aquí va la gráfica central con las predicciones del modelo'),
             dbc.Container([

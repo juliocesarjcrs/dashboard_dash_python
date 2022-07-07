@@ -1,22 +1,30 @@
-import plotly.express as px
+## Dash Imports ##
 from dash import Dash, html, dcc, Input, Output, callback, callback_context
 import dash_bootstrap_components as dbc
+import plotly.express as px
+
+## Other functionalities ##
 import pandas as pd
-from maindash import app
-from components.database.conexion import categories, df_category_regional, load_model, predict_data
 from datetime import date, datetime
 import numpy as np
 
-# print(categories.columns.unique().to_list())
+## App Recalls ##
+from maindash import app # This enable the access to the main app instance from this file if needed
+from components.database.conexion import categories, df_category_regional, load_model, predict_data # Load datasets
+
+# Create dropdowns' lists
 options_categories = ['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS','TERCEROS'] # 'TERCEROS'
 regiones = ['BOGOTÁ', 'CENTRO','NORTE', 'SANTANDER', 'SUR']
 
+#########################
+## Analysis Page Plots ##
+#########################
 
-#
-mapa = html.Div([
+fig_analysis = html.Div([
     html.P('A continuación encontrará el comportamiento de las unidades vendidas por categoría en distintos intervalos de tiempo.'),
     dbc.Row([
         dbc.Col([
+            ## Category dropdown ##
             html.P("Seleccione una categoría:"),
             dcc.Dropdown(id="category",
                 options=options_categories,
@@ -24,15 +32,20 @@ mapa = html.Div([
             )
         ]),
         dbc.Col([
+            ## Date period dropdown ##
             html.P("Seleccione un periodo:"),
             dcc.Dropdown(id="dates",
-                options=['year_month','year_week','date'],
+                options = [{'label': 'Mensual', 'value': 'year_month'},
+                            {'label': 'Semanal', 'value': 'year_week'},
+                            {'label' :'Diario', 'value':'date'}],
+                # options=['year_month','year_week','date'],
                 value='year_month', clearable=False
             )
         ])
     ]),
     dbc.Row([
         dbc.Col([
+            ## Region dropdown ##
             html.P("Seleccione una región:"),
             dcc.Dropdown(id="region",
                 options=regiones,
@@ -42,28 +55,22 @@ mapa = html.Div([
     ]),
     dcc.Graph(id="graph",config={'displayModeBar': False}),
 ])
+
 @callback(
     Output("graph", "figure"), 
     Input("category", "value"),
     Input("dates","value"),
     Input("region","value")
     )
-# def generate_chart(cat,dates,region):
-#     sel = cat+'_'+region
-#     if dates == 'date':
-#         fig = px.line(df_category_regional, x=dates, y=sel)
-#     else:
-#         datos = df_category_regional.groupby([dates]).sum().reset_index()
-#         # print(datos[cat])
-#         fig = px.line(datos, x=dates, y=sel)
-#     return fig
+## This callback updates the lineplot based on the category, date and region dropdowns values ##
 def generate_chart(cat,dates,region):
     sel = cat+'_'+region
-    df_ = df_category_regional.groupby([dates])[sel].sum().reset_index()
-    fig = px.line(data_frame = df_, x = dates, y = sel)
+    df_ = df_category_regional.groupby([dates])[sel].sum().reset_index() # Grouping data
     if dates == 'date':
+        # Daily plot
         fig = px.line(data_frame = df_, x = dates, y = sel)
     else:
+        # Weekly and monthly plot
         fig = px.line(data_frame = df_, x = dates, y = sel)
         step = 10
         x = list(np.arange(1,len(df_),step))
@@ -77,44 +84,46 @@ def generate_chart(cat,dates,region):
             )
     return fig
 
-df2 = px.data.tips() # replace with your own data source
+## PIE PLOT EXAMPLE ##
+df2 = px.data.tips() # Replace with your own data source
 fig2 = px.pie(df2, values='total_bill', names='day', hole=.3)
 
 pie1 = html.Div([
     dcc.Graph(figure=fig2, id="donut")
 ])
 
-df3 = px.data.tips()
+## HISTOGRAM PLOT EXAMPLE ##
+df3 = px.data.tips() # Replace with your own data source
 fig3 = px.histogram(df3, x="total_bill", y="tip", color="sex", marginal="rug", hover_data=df3.columns)
 histog = html.Div([
     dcc.Graph(figure=fig3, id="histogram")
 ])
 
-df4 = px.data.stocks(indexed=True)
-fig4 = px.line(df4, facet_row="company", facet_row_spacing=0.01)
-linep = html.Div(
-    dcc.Graph(figure=fig4, id="lineplot")
-)
-
+###########################
+## Prediction Page Plots ##
+###########################
 
 fig_predict = html.Div([
     dbc.Row(
         [
             dbc.Col([
+                ## Category dropdown ##
                 html.P("Seleccione una categoría:"),
                 dcc.Dropdown(id="category-predict",
                              options=options_categories,
                              value='ALCALINAS', clearable=False
                              )]),
-            dbc.Col([html.P("Seleccione una región:"),
-                     dcc.Dropdown(id="dropdown-region",
-                                  options=regiones,
-                                  value='BOGOTÁ', clearable=False
-                                  )
-                     ]),
+            dbc.Col([
+                ## Region dropdown ##
+                html.P("Seleccione una región:"),
+                dcc.Dropdown(id="dropdown-region",
+                            options=regiones,
+                            value='BOGOTÁ', clearable=False
+                            )]),
         ]),
     html.Hr(),
     dbc.Row(
+        ## Predicion Date Picker ##
         [dbc.Col(
             html.Div([html.P("Seleccione un rango de fechas que desea predecir, recuerde seleccionar únicamente el primer día del mes deseado:"),
                       dcc.DatePickerRange(
@@ -131,13 +140,13 @@ fig_predict = html.Div([
                 number_of_months_shown=2
 
             ),
-                # html.Div(id='output-container-date-picker-range'),
                 html.Hr(),
                 dbc.Button('Predecir', id='button-predict')
 
             ]),
         ),
         dbc.Col([
+            ## Period Selector (Weekly or Monthly) ##
             html.P("Seleccione el tipo de periodos que desea predecir:"),
                 dcc.RadioItems(
                     id='type-frequency',
@@ -166,6 +175,7 @@ fig_predict = html.Div([
     Input('type-frequency', 'value')
     ],
     )
+## This callback updates the prediction plot after checking input mistakes that could be made by the user ##
 def update_output(button_val, category_value, region_select, start_date, end_date, type_freq):
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
     if not start_date:
@@ -174,8 +184,6 @@ def update_output(button_val, category_value, region_select, start_date, end_dat
         return {}, 'No existe fecha final'
 
     if 'button-predict' in changed_id:
-    #print('start_date', start_date)
-    #print('end_date', end_date)
         col_name = category_value+ '_'+region_select
         file_name =col_name +'.sav'
         smodel = load_model(file_name, type_freq)
@@ -193,8 +201,7 @@ def update_output(button_val, category_value, region_select, start_date, end_dat
     else:
         return {}, ''
 
-
+## Function to calculate month between selected dates on the date picker ##
 def diff_month(d1, d2):
-
     return (d1.year - d2.year) * 12 + d1.month - d2.month
 

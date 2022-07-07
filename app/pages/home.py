@@ -2,6 +2,7 @@ from dash import html
 from lib import plots
 import dash_bootstrap_components as dbc
 page = dbc.Container([
+        ## Page Header ##
         dbc.Row(
         [
             dbc.Col(html.Img(src='assets/home-6-fill.png'),width=1),
