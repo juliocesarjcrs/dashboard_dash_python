@@ -8,6 +8,13 @@ categories = pd.read_csv(category_path)
 df_category_regional = pd.read_csv('data/df_category_regional.csv').rename(columns={'bill_date':'date'})
 df_category_regional.date = pd.to_datetime(pd.to_datetime(df_category_regional.date).dt.date)
 
+max_date = df_category_regional.date.max()
+last_date_train = {
+'year': max_date.year,
+'day': max_date.day,
+'month': max_date.month
+}
+
 
 def load_model(file_name,type_freq= 'mensual'):
     path_models = 'data/models/' + type_freq+'/'

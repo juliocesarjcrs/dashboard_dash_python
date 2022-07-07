@@ -10,7 +10,7 @@ import numpy as np
 
 ## App Recalls ##
 from maindash import app # This enable the access to the main app instance from this file if needed
-from components.database.conexion import categories, df_category_regional, load_model, predict_data # Load datasets
+from components.database.conexion import last_date_train, df_category_regional, load_model, predict_data # Load datasets
 
 # Create dropdowns' lists
 options_categories = ['ALCALINAS', 'BOMBILLOS', 'ENCENDEDORES', 'MANGANESO', 'OTROS','TERCEROS'] # 'TERCEROS'
@@ -128,11 +128,11 @@ fig_predict = html.Div([
             html.Div([html.P("Seleccione un rango de fechas que desea predecir, recuerde seleccionar únicamente el primer día del mes deseado:"),
                       dcc.DatePickerRange(
                 id='my-date-picker-range',
-                min_date_allowed=date(2022, 6, 29),
+                min_date_allowed=date(last_date_train['year'], last_date_train['month'], last_date_train['day']),
                 # max_date_allowed=date(2023, 3, 1),
-                initial_visible_month=date(2022, 6, 29),
+                initial_visible_month=date(last_date_train['year'], last_date_train['month'], last_date_train['day']),
                 # end_date=date(2023, 3, 25),
-                start_date=date(2022, 6, 29),
+                start_date=date(last_date_train['year'], last_date_train['month'], last_date_train['day']),
                 display_format='MMMM YYYY',
                 minimum_nights=90,
                 start_date_placeholder_text='Mes Inicial',
@@ -193,7 +193,7 @@ def update_output(button_val, category_value, region_select, start_date, end_dat
         f_ini = datetime.strptime(start_date, '%Y-%m-%d')
         num = diff_month(f_fin, f_ini)
         range_time = 'W' if type_freq =='semanal' else 'M'
-        future_periods = num*4 if type_freq =='semanal' else num
+        future_periods = num*10*4 if type_freq =='semanal' else num *10
         print('future_periods', future_periods, 'type range', range_time)
         predict_df = predict_data(smodel, future_periods, col_name , range_time)
         fig_result = px.line(predict_df, x='date', y="value", color="type",hover_data={"date": "|%B %d, %Y"}, title='Resultados de la predicción')
