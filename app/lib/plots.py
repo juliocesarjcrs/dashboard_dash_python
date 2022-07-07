@@ -193,7 +193,7 @@ def update_output(button_val, category_value, region_select, start_date, end_dat
         f_ini = datetime.strptime(start_date, '%Y-%m-%d')
         num = diff_month(f_fin, f_ini)
         range_time = 'W' if type_freq =='semanal' else 'M'
-        future_periods = num*10*4 if type_freq =='semanal' else num *10
+        future_periods = num*4 if type_freq =='semanal' else num
         print('future_periods', future_periods, 'type range', range_time)
         predict_df = predict_data(smodel, future_periods, col_name , range_time)
         fig_result = px.line(predict_df, x='date', y="value", color="type",hover_data={"date": "|%B %d, %Y"}, title='Resultados de la predicción')
